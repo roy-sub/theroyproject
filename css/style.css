@@ -1,0 +1,571 @@
+/* ==========================================================================
+   Subhradip Roy — portfolio site stylesheet
+   Ported from the Claude Design prototype (Portfolio.dc.html) into a plain
+   multi-page static site. Section markers below match the page sections in
+   that prototype so the mapping stays easy to audit.
+   ========================================================================== */
+
+:root{
+  /* light surface */
+  --bg:#f4f3f1;
+  --bg-hover:#eceae6;
+  --ink:#0d0d0c;
+  --body:#4a4944;
+  --meta:#6f6d68;
+  --muted:#8c8a85;
+  --faint:#a3a099;
+  --border:#dedbd5;
+  --border-btn:#cfccc5;
+
+  /* dark surface (story band, dark footer, contact/dump/journal pages) */
+  --dark-bg:#0d0d0c;
+  --dark-border:#26251f;
+  --dark-fg:#f4f3f1;
+  --dark-body:#c9c6c0;
+  --dark-meta:#8c8a85;
+  --dark-faint:#a3a099;
+  --dark-btn-border:#3a3934;
+  --dark-btn-hover:#1a1a18;
+
+  /* accents */
+  --accent-dot: oklch(0.64 0.17 47);
+  --yc-icon-bg: oklch(0.62 0.2 42);
+  --yc-text: oklch(0.52 0.19 42);
+  --yc-bg: oklch(0.68 0.19 45 / .12);
+  --yc-border: oklch(0.68 0.19 45 / .35);
+  --spotify-green: oklch(0.76 0.19 145);
+
+  /* type */
+  --font-sans:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --font-serif:'Instrument Serif',Georgia,serif;
+  --font-mono:'JetBrains Mono',monospace;
+
+  /* layout */
+  --gutter: clamp(16px,3vw,48px);
+  --header-h: 52px;
+  --radius-card: 4px;
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font-sans);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:var(--ink);color:var(--bg)}
+a{color:var(--ink);text-decoration:none}
+a:hover{color:var(--meta)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+img{display:block;max-width:100%}
+h1,h2,h3,p,figure,blockquote{margin:0}
+.dark :focus-visible,[data-surface="dark"] :focus-visible{outline-color:var(--dark-fg)}
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes eq{0%,100%{height:18%}50%{height:88%}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+}
+
+/* ==========================================================================
+   Header / nav — fixed, 3-column grid so nav stays screen-centered
+   regardless of clock/lang widths. Same on every page.
+   ========================================================================== */
+.site-header{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:grid;grid-template-columns:1fr minmax(0,auto) 1fr;align-items:center;gap:20px;
+  padding:0 20px;height:var(--header-h);
+  background:rgba(244,243,241,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+/* The clock/location and lang-toggle columns are 1fr with nowrap content,
+   so grid never shrinks them below their natural width — all the squeeze
+   from a narrow viewport lands on the middle nav column instead (see
+   .site-nav below), exactly where we want it. */
+@media (max-width:480px){
+  .site-header{padding:0 12px;gap:10px}
+}
+.header-status{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--accent-dot);
+  animation:blip 2.4s ease-in-out infinite;flex-shrink:0;
+}
+.header-clock{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:500;min-width:66px}
+.header-loc{color:var(--meta)}
+
+.site-nav{
+  display:flex;justify-content:flex-start;gap:2px;flex-wrap:nowrap;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  /* On a viewport too narrow to fit every pill, scroll horizontally
+     instead of wrapping — wrapping would grow the (fixed, single-line)
+     header's height and everything below would overlap it. When the nav
+     DOES fit (the grid column sizes to its content, see .site-header),
+     flex-start reads identically to centered since there's no leftover
+     space to distribute either way. */
+  max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+}
+.site-nav::-webkit-scrollbar{display:none}
+.site-nav a{
+  cursor:pointer;padding:6px 11px;border-radius:100px;white-space:nowrap;flex-shrink:0;
+  color:var(--meta);background:transparent;
+  transition:background .3s ease,color .3s ease;
+}
+.site-nav a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+
+.header-lang{
+  display:flex;align-items:center;justify-content:flex-end;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--meta);white-space:nowrap;
+}
+.lang-toggle{
+  display:flex;align-items:center;gap:1px;border:1px solid var(--border);
+  border-radius:100px;padding:2px;
+}
+.lang-toggle button{
+  appearance:none;border:0;background:transparent;cursor:pointer;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 9px;border-radius:100px;color:var(--muted);
+  transition:background .3s ease,color .3s ease;
+}
+.lang-toggle button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+
+/* Header's third column is empty on journal post pages (no toggle there) —
+   still reserve the column so the nav stays centered. */
+.header-lang.is-empty{visibility:hidden}
+
+main{padding-top:var(--header-h)}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn{
+  display:inline-block;padding:13px 22px;border-radius:100px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  transition:opacity .3s ease,border-color .3s ease,background .3s ease;
+  border:1px solid transparent;
+}
+.btn-sm{padding:11px 18px;font-size:10px}
+.btn-primary{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.btn-primary:hover{opacity:.75;color:var(--bg)}
+.btn-secondary{border-color:var(--border-btn);color:var(--ink)}
+.btn-secondary:hover{border-color:var(--ink);background:var(--bg-hover);color:var(--ink)}
+.btn-primary-dark{border-color:var(--dark-fg);background:var(--dark-fg);color:var(--dark-bg)}
+.btn-primary-dark:hover{opacity:.8;color:var(--dark-bg)}
+.btn-secondary-dark{border-color:var(--dark-btn-border);color:var(--dark-fg)}
+.btn-secondary-dark:hover{border-color:var(--dark-fg);background:var(--dark-btn-hover);color:var(--dark-fg)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* ==========================================================================
+   Headings — decode/scramble effect + serif accent line
+   ========================================================================== */
+.h-decode{
+  margin:0;font-weight:700;line-height:1.02;letter-spacing:-.05em;
+  text-transform:uppercase;white-space:nowrap;
+}
+.h-hero{font-size:clamp(2.7rem,11.6vw,12rem)}
+.h-xl{font-size:clamp(2.4rem,8.6vw,7rem)}
+.h-lg{font-size:clamp(2.2rem,6.6vw,5.6rem)}
+.h-md{font-size:clamp(2rem,5.2vw,4.4rem)}
+/* margin-bottom restores the gap before the lede that .h-decode's shared
+   margin:0 reset removes — every other page controls that gap from the
+   surrounding layout instead, but the post template has no wrapper for
+   that, so the heading needs to own it directly here (matches the
+   32px the original design source used). */
+.h-post{font-size:clamp(1.8rem,4.6vw,3.4rem);line-height:1.06;letter-spacing:-.035em;white-space:normal;text-wrap:balance;margin-bottom:clamp(20px,3vw,32px)}
+@media (max-width:480px){
+  .h-decode{white-space:normal}
+}
+
+.accent-serif{
+  font-family:var(--font-serif);font-style:italic;font-weight:400;
+  line-height:1;letter-spacing:-.02em;color:var(--muted);
+}
+[data-surface="dark"] .accent-serif{color:var(--dark-meta)}
+
+/* ==========================================================================
+   Reveal-on-scroll + count-up
+   ========================================================================== */
+[data-reveal]{opacity:0;transform:translateY(18px);transition:opacity .9s ease,transform .9s var(--ease)}
+[data-reveal].is-revealed{opacity:1;transform:none}
+[data-reveal="up-sm"]{transform:translateY(14px)}
+/* Decode/scramble headings don't fade or slide — only their character
+   content animates (see scramble() in js/main.js). They stay
+   visibility:hidden until js/main.js adds .is-revealed and starts the
+   scramble, so the first thing ever painted is the random glyph, not a
+   flash of the real word before JS takes over. Layout space is still
+   reserved (visibility, not display), so nothing shifts when it appears.
+   js/main.js flips visibility and sets the first scrambled character in
+   the same synchronous task, so there's no in-between frame to flash.
+   A <noscript> block in each page's <head> forces this back to visible
+   for the no-JS case, so text is never permanently hidden. */
+[data-reveal="scramble"]{opacity:1;transform:none;transition:none;visibility:hidden}
+[data-reveal="scramble"].is-revealed{visibility:visible}
+.count-num{font-variant-numeric:tabular-nums}
+
+/* ==========================================================================
+   Sections & trust strip (home)
+   ========================================================================== */
+.section{padding:clamp(64px,9vw,140px) var(--gutter)}
+.section-b{border-bottom:1px solid var(--border)}
+.section-dark{background:var(--dark-bg);color:var(--dark-fg)}
+.section-dark .section-b{border-bottom:1px solid var(--dark-border)}
+
+.hero{
+  position:relative;min-height:calc(100vh - var(--header-h));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:clamp(48px,7vw,96px) var(--gutter) clamp(72px,9vw,104px);
+  border-bottom:1px solid var(--border);
+}
+.hero-corner{
+  position:absolute;bottom:26px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  opacity:0;transition:opacity 1s ease 2.1s;
+}
+.hero-corner.is-revealed{opacity:1}
+.hero-corner-l{left:var(--gutter)}
+.hero-corner-r{right:var(--gutter)}
+.hero-avail{
+  display:flex;align-items:center;gap:9px;margin-bottom:clamp(20px,3.2vw,44px);
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--meta);
+}
+.hero-sub{
+  margin:clamp(8px,1.2vw,16px) 0 0;font-size:clamp(1.35rem,4.4vw,3.6rem);
+  color:var(--body); /* overrides .accent-serif's muted tone — this line reads as body copy, not a kicker */
+}
+.hero-lede{
+  margin:clamp(28px,4vw,44px) 0 0;max-width:52ch;font-size:clamp(15px,1.5vw,19px);
+  line-height:1.55;color:var(--meta);text-wrap:pretty;
+}
+.hero-actions{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:clamp(28px,3vw,40px);
+}
+
+.trust{padding:26px var(--gutter);border-bottom:1px solid var(--border);overflow:hidden}
+.trust-row{display:flex;flex-wrap:wrap;align-items:center;gap:clamp(20px,4vw,56px)}
+.trust-label{
+  display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--meta);white-space:nowrap;
+}
+.yc-badge{
+  display:inline-flex;align-items:center;gap:6px;background:var(--yc-bg);
+  border:1px solid var(--yc-border);border-radius:4px;padding:4px 9px 4px 6px;
+}
+.yc-mark{
+  display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;
+  border-radius:2px;background:var(--yc-icon-bg);color:#fff;font-family:var(--font-sans);
+  font-size:11px;font-weight:500;line-height:1;
+}
+.yc-text{color:var(--yc-text);font-weight:500}
+.trust-logos{display:flex;flex:1;gap:clamp(18px,3vw,44px);align-items:center;flex-wrap:wrap}
+.trust-logos img{width:104px;height:30px;object-fit:contain}
+
+/* ==========================================================================
+   Selected work grid (home) + project cards
+   ========================================================================== */
+.work-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;margin-bottom:clamp(28px,4vw,52px);flex-wrap:wrap}
+.work-all-link{cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--meta);white-space:nowrap;transition:color .3s ease}
+.work-all-link:hover{color:var(--ink)}
+.work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(16px,2vw,28px)}
+.work-card{cursor:pointer;display:block}
+.work-card-media{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;background:#e7e4df;border-radius:var(--radius-card)}
+.work-card-media img{width:100%;height:100%;object-fit:cover}
+.work-card-meta{display:flex;justify-content:space-between;gap:12px;padding-top:14px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.work-card-meta span:last-child{color:var(--muted)}
+
+/* Story band (home + about) */
+.story-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(32px,5vw,80px);align-items:start}
+.story-copy p{margin:0 0 18px;max-width:52ch;font-size:clamp(15px,1.4vw,18px);line-height:1.6;color:var(--dark-body);text-wrap:pretty}
+.story-copy p:last-of-type{margin-bottom:28px}
+.story-link{display:inline-block;cursor:pointer;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-meta);border-bottom:1px solid var(--dark-btn-border);padding-bottom:4px;transition:color .3s ease}
+.story-link:hover{color:var(--dark-fg)}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--dark-border);border:1px solid var(--dark-border)}
+.stat-grid.stat-grid-flat{background:transparent;border:0;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:clamp(24px,4vw,56px)}
+.stat-cell{background:var(--dark-bg);padding:clamp(24px,3vw,40px) 20px}
+.stat-grid-flat .stat-cell{padding:0}
+.stat-num{font-size:clamp(2.6rem,6vw,5rem);line-height:1;letter-spacing:-.05em;font-weight:500}
+.stat-grid-flat .stat-num{font-size:clamp(2.4rem,6vw,4.6rem)}
+.stat-num .suffix{color:var(--dark-meta)}
+.stat-label{margin-top:12px;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-meta)}
+
+/* ==========================================================================
+   Work list page — sticky left / independently scrolling right column
+   ========================================================================== */
+.work-layout{display:grid;grid-template-columns:minmax(0,34%) minmax(0,1fr);min-height:calc(100vh - var(--header-h))}
+.work-side{
+  position:sticky;top:var(--header-h);height:calc(100vh - var(--header-h));
+  padding:clamp(32px,5vw,64px) clamp(16px,2.4vw,36px) 32px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  border-right:1px solid var(--border);
+}
+.work-side-lede{margin:0 0 36px;max-width:34ch;font-size:15px;line-height:1.55;color:var(--body);text-wrap:pretty}
+.work-side-nav{display:flex;flex-direction:column;gap:2px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.work-side-nav a{cursor:pointer;display:flex;gap:14px;padding:8px 0;opacity:.35;transition:opacity .4s ease;color:var(--ink)}
+.work-side-nav a.is-active{opacity:1}
+.work-side-nav a span:first-child{color:var(--muted)}
+.work-avail{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.work-avail-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+.work-scroll{
+  height:calc(100vh - var(--header-h));overflow-y:auto;
+  padding:clamp(32px,5vw,64px) var(--gutter) 25vh;
+  display:flex;flex-direction:column;gap:clamp(28px,4vw,64px);
+}
+.work-scroll-card{cursor:pointer;display:block}
+.work-scroll-media{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:#e7e4df;border-radius:var(--radius-card)}
+.work-scroll-media img{width:100%;height:100%;object-fit:cover}
+.work-scroll-title-row{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding-top:18px;flex-wrap:wrap}
+.work-scroll-title{margin:0;font-size:clamp(24px,3vw,42px);letter-spacing:-.035em;font-weight:500}
+.work-scroll-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.work-scroll-desc{margin:10px 0 0;max-width:62ch;font-size:15px;line-height:1.55;color:var(--body);text-wrap:pretty}
+
+@media (max-width:860px){
+  .work-layout{display:block}
+  .work-side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border)}
+  /* justify-content:space-between (desktop) relies on the sidebar being a
+     full-viewport-tall sticky column to push this block to the bottom —
+     with height:auto above it collapses to zero gap instead, so give it
+     a real margin here. */
+  .work-avail{margin-top:40px}
+  .work-scroll{height:auto;overflow:visible;padding-bottom:clamp(56px,7vw,110px)}
+}
+
+/* ==========================================================================
+   Project detail page
+   ========================================================================== */
+.project-hero{padding:clamp(48px,7vw,110px) var(--gutter) clamp(32px,4vw,56px);border-bottom:1px solid var(--border)}
+.back-link{display:inline-block;cursor:pointer;margin-bottom:clamp(28px,4vw,56px);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--meta);transition:color .3s ease}
+.back-link:hover{color:var(--ink)}
+.project-lede{margin:clamp(24px,3vw,40px) 0 0;max-width:52ch;font-size:clamp(16px,1.6vw,21px);line-height:1.5;color:var(--body);text-wrap:pretty}
+
+.project-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));border-bottom:1px solid var(--border)}
+/* Launch CTA — the primary conversion action on each project detail page.
+   Sits directly under the lede (first thing scanned) so it reads as THE
+   action on the page, not one of several. */
+.project-cta{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:clamp(28px,3.6vw,44px)}
+.project-cta-kicker{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--meta)}
+.btn-launch{
+  display:inline-flex;align-items:center;gap:10px;padding:17px 28px;border-radius:100px;
+  border:1px solid var(--ink);background:var(--ink);color:var(--bg);
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),opacity .3s ease;
+}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 14px 28px -12px rgba(13,13,12,.35);opacity:1;color:var(--bg)}
+.btn-launch .arrow{transition:transform .3s var(--ease)}
+.btn-launch:hover .arrow{transform:translate(3px,-3px)}
+
+/* Single hero image, now a link straight to the live product — with a
+   permanent (not hover-only, so it still works on touch) chip so the
+   click target is obvious without another button competing for attention. */
+.project-hero-media{padding:clamp(28px,4vw,56px) var(--gutter) 0}
+.project-hero-media a{position:relative;display:block;width:100%;aspect-ratio:16/9;overflow:hidden;background:#e7e4df;border-radius:var(--radius-card);transition:transform .5s var(--ease)}
+.project-hero-media a:hover{transform:translateY(-3px)}
+.project-hero-media img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.project-hero-media a:hover img{transform:scale(1.03)}
+.project-hero-chip{
+  position:absolute;right:16px;bottom:16px;display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:100px;background:rgba(13,13,12,.72);backdrop-filter:blur(6px);
+  color:#fff;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+}
+
+.project-body{padding:clamp(48px,7vw,110px) var(--gutter);display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(28px,5vw,80px)}
+.project-body h2{margin:0 0 18px;font-size:clamp(20px,2.2vw,28px);letter-spacing:-.03em;font-weight:500}
+.project-body p{margin:0;max-width:52ch;font-size:16px;line-height:1.6;color:var(--body);text-wrap:pretty}
+
+.project-next{cursor:pointer;background:var(--dark-bg);color:var(--dark-fg);padding:clamp(48px,7vw,110px) var(--gutter);display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap}
+.project-next-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dark-meta)}
+.project-next-title{font-size:clamp(2rem,6vw,5rem);line-height:.95;letter-spacing:-.05em;font-weight:500}
+
+/* ==========================================================================
+   About page
+   ========================================================================== */
+.about-hero{padding:clamp(40px,6vw,88px) var(--gutter) clamp(40px,5vw,72px);border-bottom:1px solid var(--border)}
+.about-kicker{margin:0 0 clamp(32px,4vw,56px);font-size:clamp(1.6rem,4.6vw,3.6rem)}
+.about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(28px,4vw,64px);align-items:center}
+.about-portrait{position:relative;width:100%;aspect-ratio:4/5;overflow:hidden;background:#e7e4df;border-radius:var(--radius-card)}
+.about-portrait img{width:100%;height:100%;object-fit:cover}
+.about-copy p{font-size:16px;line-height:1.65;color:var(--body);text-wrap:pretty;margin:0 0 20px}
+.about-copy p.lead{font-size:clamp(17px,1.8vw,23px);line-height:1.45;letter-spacing:-.01em;color:var(--ink)}
+
+/* ==========================================================================
+   Dump page
+   ========================================================================== */
+.dump-head{padding:clamp(48px,7vw,110px) var(--gutter) clamp(28px,4vw,48px);border-bottom:1px solid var(--border)}
+.dump-head-row{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:clamp(20px,4vw,56px)}
+.dump-head-lede{margin:0;max-width:44ch;font-size:clamp(15px,1.5vw,19px);line-height:1.5;color:var(--body);text-wrap:pretty}
+.dump-head-meta{display:flex;flex-direction:column;gap:7px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:right}
+
+.dump-row{padding:clamp(32px,4vw,64px) var(--gutter) clamp(40px,5vw,72px);border-bottom:1px solid var(--border)}
+.dump-row:last-of-type{border-bottom:0}
+.dump-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2.2vw,34px) clamp(14px,1.8vw,28px)}
+.dump-figure{margin:0;display:flex;flex-direction:column;gap:11px}
+.dump-media{position:relative;width:100%;aspect-ratio:3/4;background:#e7e4df;overflow:hidden;transition:transform .6s var(--ease)}
+.dump-media:hover{transform:translateY(-7px)}
+.dump-media img{width:100%;height:100%;object-fit:cover}
+.dump-caption{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase}
+.dump-caption-left{display:flex;gap:9px;min-width:0}
+.dump-idx{flex-shrink:0;color:var(--faint)}
+.dump-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.dump-caption-right{display:flex;flex-shrink:0;gap:5px;color:var(--muted)}
+/* At 3-across on a narrow phone, each column is ~100px — too tight for
+   "place · date" to hold its full width AND the title to keep any room,
+   so the fixed-width right side was overflowing into the next column's
+   caption. Stack each caption onto two lines there instead of forcing
+   one cramped row. */
+@media (max-width:600px){
+  .dump-caption{flex-direction:column;align-items:stretch;gap:3px}
+  .dump-caption-left{width:100%}
+  .dump-caption-right{flex-shrink:1;flex-wrap:wrap}
+}
+
+.player-band{padding:clamp(44px,6vw,88px) var(--gutter)}
+.player-band-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:clamp(32px,5vw,80px);align-items:center}
+.player-kicker{margin-bottom:clamp(18px,2.4vw,28px);font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dark-meta)}
+.player-quote{margin:0;max-width:34ch;font-family:var(--font-serif);font-style:italic;font-size:clamp(1.5rem,3.4vw,2.8rem);line-height:1.15;letter-spacing:-.02em;color:var(--dark-fg);text-wrap:pretty}
+.player-card-wrap{width:min(400px,100%);justify-self:end;perspective:1000px}
+.player-card-tilt{transform:rotateY(-4deg) rotateX(2deg);transform-style:preserve-3d;transition:transform .6s var(--ease)}
+.player-card-tilt:hover{transform:rotateY(0deg) rotateX(0deg) translateY(-5px)}
+.player-card{
+  display:flex;align-items:center;gap:14px;padding:13px;border-radius:8px;
+  background:linear-gradient(160deg,#282828 0%,#1a1a1a 60%,#141414 100%);
+  box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 20px 38px -14px rgba(0,0,0,.6),0 46px 80px -34px rgba(0,0,0,.5);
+}
+.player-art{position:relative;width:64px;height:64px;flex-shrink:0;overflow:hidden;border-radius:4px;background:#2f2f2f;box-shadow:0 8px 18px -6px rgba(0,0,0,.7)}
+.player-art img{width:100%;height:100%;object-fit:cover}
+.player-info{flex:1;min-width:0}
+.player-eq-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-family:var(--font-mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--spotify-green)}
+.player-eq{display:flex;align-items:flex-end;gap:2px;height:8px}
+/* Bars only actually animate while audio is playing — data-player toggles
+   .is-playing in js/main.js (setupDumpPlayer). Paused by default so they
+   don't pulse over silence. */
+.player-eq span{width:2px;background:var(--spotify-green);animation:eq .9s ease-in-out infinite;animation-play-state:paused}
+.player-eq span:nth-child(1){height:40%}
+.player-eq span:nth-child(2){height:85%;animation-delay:.2s}
+.player-eq span:nth-child(3){height:30%;animation-delay:.4s}
+[data-player].is-playing .player-eq span{animation-play-state:running}
+.player-track{font-size:14px;font-weight:500;letter-spacing:-.012em;color:var(--dark-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-artist{margin-bottom:10px;font-size:11.5px;color:var(--dark-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-scrub-row{display:flex;align-items:center;gap:9px}
+.player-scrub{position:relative;flex:1;height:3px;border-radius:2px;background:#3f3f3f;overflow:hidden;cursor:pointer}
+.player-scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--dark-fg);border-radius:2px}
+.player-time{font-family:var(--font-mono);font-size:8.5px;color:var(--dark-meta);font-variant-numeric:tabular-nums}
+.player-play{
+  appearance:none;border:0;padding:0;font-family:inherit;cursor:pointer;
+  flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--spotify-green);color:var(--dark-bg);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  box-shadow:0 8px 18px -7px oklch(0.76 0.19 145 / .85);transition:transform .3s ease;
+}
+.player-play:hover{transform:scale(1.09);color:var(--dark-bg)}
+
+/* ==========================================================================
+   Journal — list + post
+   ========================================================================== */
+.journal-head{padding:clamp(48px,7vw,110px) var(--gutter) clamp(28px,4vw,52px);border-bottom:1px solid var(--border)}
+.journal-head-lede{margin:0;max-width:48ch;font-size:16px;line-height:1.55;color:var(--body);text-wrap:pretty}
+.journal-list{padding:0 var(--gutter) clamp(64px,8vw,120px)}
+.journal-row{
+  cursor:pointer;display:grid;grid-template-columns:100px 1fr auto;gap:24px;align-items:baseline;
+  padding:clamp(24px,3vw,38px) 8px;border-bottom:1px solid var(--border);transition:background .35s ease;
+}
+.journal-row:hover{background:var(--bg-hover)}
+.journal-row-date{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.journal-row h2{margin:0 0 8px;font-size:clamp(20px,2.4vw,30px);letter-spacing:-.03em;font-weight:500}
+.journal-row p{margin:0;max-width:58ch;font-size:15px;line-height:1.55;color:var(--body);text-wrap:pretty}
+.journal-row-read{font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+
+.post-article{max-width:720px;margin:0 auto;padding:clamp(48px,7vw,110px) var(--gutter) clamp(64px,8vw,120px)}
+.post-meta-row{display:flex;gap:20px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.post-lede{margin:0 0 24px;font-size:19px;line-height:1.6;color:var(--ink);text-wrap:pretty}
+.post-article p{margin:0 0 22px;font-size:17px;line-height:1.7;color:var(--body);text-wrap:pretty}
+/* Inline links written in a post's Markdown body — underlined so they read
+   as links inside a paragraph of body copy (the site's global `a` style
+   has no underline, which disappears on prose-length text otherwise). */
+.post-article p a{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--border-btn)}
+.post-article p a:hover{text-decoration-color:var(--ink)}
+.post-quote{margin:36px 0;padding:0 0 0 24px;border-left:1px solid var(--ink);font-family:var(--font-serif);font-style:italic;font-size:24px;line-height:1.4;color:var(--ink)}
+/* Optional hero image at the top of a post (front matter: cover:). */
+.post-cover{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:var(--radius-card);background:#e7e4df;margin:8px 0 32px}
+.post-cover img{width:100%;height:100%;object-fit:cover}
+/* Inline image dropped into the Markdown body as its own line:
+   ![caption](path) — renders full-width with its alt text as a caption. */
+.post-figure{margin:8px 0 32px}
+.post-figure img{width:100%;border-radius:var(--radius-card);display:block;background:#e7e4df}
+.post-figure figcaption{margin-top:10px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:center}
+/* Bilingual post body: journal/build.py renders the lede + body twice,
+   once per language, each wrapped in [data-lang-block]. Only the block
+   matching <html lang="…"> is shown — js/i18n.js already sets that
+   attribute on toggle, so no extra JS is needed here, just CSS keyed off
+   the same attribute. Default (no JS, or lang="en") shows English. */
+[data-lang-block="de"]{display:none}
+:root[lang="de"] [data-lang-block="en"]{display:none}
+:root[lang="de"] [data-lang-block="de"]{display:block}
+.post-footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+.post-byline{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+/* Template-only helper: a highlighted block of authoring instructions,
+   stripped out (or ignored) once real post content replaces it. */
+.template-note{
+  margin:0 0 32px;padding:16px 18px;border:1px dashed var(--border-btn);border-radius:6px;
+  background:var(--bg-hover);font-size:13px;line-height:1.6;color:var(--meta);
+}
+.template-note code{font-family:var(--font-mono);font-size:12px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px}
+
+/* ==========================================================================
+   Contact page
+   ========================================================================== */
+.contact-hero{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(32px,5vw,72px);
+  align-items:center;min-height:calc(100vh - var(--header-h));
+  padding:clamp(44px,7vw,104px) var(--gutter) clamp(48px,6vw,88px);
+}
+.contact-kicker{margin:clamp(4px,.8vw,10px) 0 clamp(22px,3vw,34px);font-size:clamp(1.4rem,4vw,3.2rem);line-height:1.02}
+.contact-lede{margin:0;max-width:46ch;font-size:clamp(15px,1.5vw,19px);line-height:1.55;color:var(--meta);text-wrap:pretty}
+.seal-wrap{display:flex;justify-content:center}
+.seal{position:relative;width:clamp(190px,22vw,280px);aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
+.seal svg{position:absolute;inset:0;width:100%;height:100%;animation:spin 26s linear infinite}
+.seal-core{width:44%;aspect-ratio:1/1;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:clamp(18px,2.2vw,26px)}
+
+/* ==========================================================================
+   Footer — light/dark, full/minimal
+   ========================================================================== */
+.site-footer{border-top:1px solid var(--border);background:var(--bg)}
+.site-footer.is-dark{border-top:1px solid var(--dark-border);background:var(--dark-bg);color:var(--dark-fg)}
+.footer-top{
+  display:grid;grid-template-columns:minmax(280px,1.6fr) repeat(auto-fit,minmax(140px,1fr));
+  gap:clamp(28px,4vw,64px);padding:clamp(44px,6vw,88px) var(--gutter) clamp(32px,4vw,56px);
+}
+.footer-statement{margin:0 0 clamp(22px,3vw,34px);max-width:16ch;font-weight:700;font-size:clamp(1.9rem,5.4vw,4.4rem);line-height:.98;letter-spacing:-.05em;text-transform:uppercase}
+.is-dark .footer-statement{color:var(--dark-fg)}
+.footer-name{margin:0 0 14px;max-width:16ch;font-weight:700;font-size:clamp(1.9rem,5.4vw,4.4rem);line-height:.98;letter-spacing:-.05em;text-transform:uppercase}
+.footer-tagline{margin:0;max-width:34ch;font-size:15px;line-height:1.55;color:var(--muted);text-wrap:pretty}
+.is-dark .footer-tagline{color:var(--dark-meta)}
+.footer-col{display:flex;flex-direction:column;gap:12px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--meta)}
+.is-dark .footer-col{color:var(--dark-meta)}
+.footer-col-label{color:var(--faint)}
+.footer-col a,.footer-col span.footer-link{cursor:pointer;transition:color .3s ease;color:inherit}
+.footer-col a:hover,.footer-col span.footer-link:hover{color:var(--ink)}
+.is-dark .footer-col a:hover,.is-dark .footer-col span.footer-link:hover{color:var(--dark-fg)}
+.footer-bottom{
+  display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
+  padding:18px var(--gutter) 22px;border-top:1px solid var(--border);
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+}
+.is-dark .footer-bottom{border-top:1px solid var(--dark-border)}
+
+@media (max-width:640px){
+  .footer-top{grid-template-columns:1fr}
+}

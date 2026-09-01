@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Post title goes here — Subhradip Roy</title>
+<meta name="description" content="One-sentence summary of the post for search results and social previews.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<noscript><style>[data-reveal="scramble"]{visibility:visible}</style></noscript>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="apple-touch-icon" href="../favicon.png">
+</head>
+<body>
+<!--
+  JOURNAL POST TEMPLATE — manual fallback only.
+
+  The preferred way to add a post is journal/posts-md/*.md +
+  `python3 journal/build.py` — see journal-guide.md in the site root.
+  That script generates journal/posts/*.html automatically, in this exact
+  bilingual layout, from a plain Markdown file (including wiring the
+  EN/DE toggle and the js/i18n.js dictionary entries for you). Reach for
+  THIS file only if you want to hand-write a one-off HTML page instead.
+
+  Every post on this site is bilingual — English and German, switchable
+  with the header toggle. This template mirrors that: fill in BOTH the
+  [EN] and [DE] placeholders below, all the way through.
+
+  How to use (manual path):
+  1. Copy this file to journal/posts/YYYY-MM-DD-slug-in-kebab-case.html
+     (slug = a short URL-safe version of the ENGLISH title).
+  2. Fill in every [BRACKETED] placeholder below — title, date, read
+     time, lede, body paragraphs, pull quote — in both languages.
+  3. Add this post's title/lede/read-time (English -> German) as a new
+     entry inside js/i18n.js's DICT, ABOVE the
+     "BUILD:JOURNAL:START" marker (never below it — that section is
+     rewritten by journal/build.py and would delete a hand-added entry
+     on the next run of the script for a DIFFERENT post).
+  4. Add a matching row to the post list in journal/index.html, between
+     the BUILD:POSTS:START / BUILD:POSTS:END comments (copy one
+     <a class="journal-row"> block, point its href at the new file,
+     add data-i18n attributes matching what you put in js/i18n.js).
+  5. Delete this comment block and the .template-note box below before
+     publishing — they're authoring aids only.
+
+  Note: rerunning journal/build.py will NOT delete a manually-added post
+  (it only manages files that came from posts-md/), but it also won't
+  translate, list, or maintain it for you going forward — that's on you,
+  by hand, every time. Using Markdown is much less error-prone.
+-->
+<header class="site-header">
+  <div class="header-status">
+    <span class="status-dot" aria-hidden="true"></span>
+    <span class="header-clock" data-clock>00:00:00</span>
+    <span class="header-loc">IND — IST</span>
+  </div>
+  <nav class="site-nav">
+    <a href="../index.html" data-i18n="Index">Index</a>
+    <a href="../work/index.html" data-i18n="Work">Work</a>
+    <a href="../about.html" data-i18n="About">About</a>
+    <a href="../journal/index.html" aria-current="page" data-i18n="Journal">Journal</a>
+    <a href="../dump.html" data-i18n="Dump">Dump</a>
+    <a href="../contact.html" data-i18n="Contact">Contact</a>
+  </nav>
+  <div class="header-lang">
+    <div class="lang-toggle">
+      <button type="button" data-lang-btn="en" aria-current="true">EN</button>
+      <button type="button" data-lang-btn="de" aria-current="false">DE</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <article class="post-article">
+    <a class="back-link" href="../journal/index.html" data-i18n="← Journal">← Journal</a>
+
+    <div class="template-note">
+      <strong>Template note:</strong> replace everything below — including
+      this box — before publishing. Date format matches the rest of the
+      site: <code>DD.MM.YY</code>. Read time is a rough word-count
+      estimate (~200 wpm), calculated separately per language since
+      German text runs longer. The <code>data-i18n</code> values on the
+      meta/title must exactly match the English string you add as a key
+      in js/i18n.js's DICT.
+    </div>
+
+    <div class="post-meta-row"><span>[DD.MM.YY]</span><span data-i18n="[N min — EN]">[N min — EN]</span></div>
+    <h1 class="h-decode h-post" data-reveal="scramble" data-i18n="[Post title — EN]">[Post title — EN]</h1>
+
+    <div data-lang-block="en">
+      <p class="post-lede">[One or two sentences that work as the hook, in English — this line renders larger than the rest of the body, right under the title.]</p>
+      <p>[First body paragraph — EN.]</p>
+      <p>[Second body paragraph — EN.]</p>
+      <blockquote class="post-quote">[A short, quotable line pulled from the piece — EN.]</blockquote>
+      <p>[Closing paragraph — EN.]</p>
+    </div>
+    <div data-lang-block="de">
+      <p class="post-lede">[Die deutsche Version des Hook-Satzes.]</p>
+      <p>[Erster Absatz — DE.]</p>
+      <p>[Zweiter Absatz — DE.]</p>
+      <blockquote class="post-quote">[Ein kurzes, zitierbares Zitat — DE.]</blockquote>
+      <p>[Schlussabsatz — DE.]</p>
+    </div>
+
+    <div class="post-footer">
+      <span class="post-byline">Subhradip Roy</span>
+      <a class="btn btn-secondary" href="mailto:subhrastien@gmail.com" data-i18n="Reply by email →">Reply by email →</a>
+    </div>
+  </article>
+</main>
+
+<footer class="site-footer is-dark">
+  <div class="footer-top">
+    <div>
+      <h2 class="footer-statement" data-i18n="Let's build something that holds up.">Let's build something that holds up.</h2>
+      <div class="btn-row">
+        <a class="btn btn-primary-dark" href="mailto:subhrastien@gmail.com" data-i18n="Email me">Email me</a>
+        <a class="btn btn-secondary-dark" href="https://calendly.com/subhradip_roy/15-minutes-short-call" target="_blank" rel="noreferrer" data-i18n="Book a call ↗">Book a call ↗</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label" data-i18n="Pages">Pages</span>
+      <a href="../index.html" data-i18n="Index">Index</a>
+      <a href="../work/index.html" data-i18n="Work">Work</a>
+      <a href="../about.html" data-i18n="About">About</a>
+      <a href="../journal/index.html" data-i18n="Journal">Journal</a>
+      <a href="../dump.html" data-i18n="Dump">Dump</a>
+      <a href="../contact.html" data-i18n="Contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <span class="footer-col-label" data-i18n="Elsewhere">Elsewhere</span>
+      <a href="https://x.com/theroyprojects" target="_blank" rel="noreferrer">X ↗</a>
+      <a href="https://www.linkedin.com/in/subhradip-roy/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+      <a href="https://www.upwork.com/freelancers/~01828a5ece6eb825db" target="_blank" rel="noreferrer">Upwork ↗</a>
+      <a href="https://contra.com/theroyproject" target="_blank" rel="noreferrer">Contra ↗</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Subhradip Roy</span>
+    <span data-i18n="Top 1% — Upwork &amp; Contra">Top 1% — Upwork &amp; Contra</span>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+<script src="../js/i18n.js"></script>
+</body>
+</html>
