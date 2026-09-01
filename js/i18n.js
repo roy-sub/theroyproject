@@ -72,6 +72,7 @@
     '← All work': '← Alle Arbeiten',
     'The problem': 'Das Problem', 'What I built': 'Was ich gebaut habe', 'Next project': 'Nächstes Projekt',
     'Live product': 'Live-Produkt', 'Open live app ↗': 'Live-App öffnen ↗',
+    'Source code': 'Quellcode', 'Frontend': 'Frontend', 'Backend': 'Backend',
     'Try RaceOS AI': 'RaceOS AI ausprobieren',
     'Try SORA Copilot': 'SORA Copilot ausprobieren',
     'Try Appeal Architect': 'Appeal Architect ausprobieren',

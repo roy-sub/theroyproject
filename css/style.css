@@ -368,6 +368,40 @@ main{padding-top:var(--header-h)}
 .btn-launch .arrow{transition:transform .3s var(--ease)}
 .btn-launch:hover .arrow{transform:translate(3px,-3px)}
 
+/* Source-code links — one visual step below .btn-launch on purpose: outline
+   pills instead of a filled one, so the live-product CTA stays the single
+   primary action while the repos stay one glance away. The hairline rule
+   after the label separates "use it" from "read it" without a new heading.
+   Each pill carries its real owner/repo path under the label, so the link
+   proves where it goes before anyone clicks it. */
+.project-source{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin-top:clamp(20px,2.6vw,30px)}
+.project-source-label{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+}
+.project-source-label::after{content:"";width:clamp(28px,6vw,64px);height:1px;background:var(--border)}
+.repo-links{display:flex;flex-wrap:wrap;gap:10px}
+.repo-link{
+  display:inline-flex;align-items:center;gap:12px;padding:11px 18px 11px 16px;border-radius:100px;
+  border:1px solid var(--border-btn);color:var(--ink);
+  transition:transform .3s var(--ease),border-color .3s ease,background .3s ease;
+}
+.repo-link:hover{transform:translateY(-2px);border-color:var(--ink);background:var(--bg-hover);color:var(--ink)}
+.repo-link-mark{width:18px;height:18px;flex-shrink:0}
+.repo-link-text{display:flex;flex-direction:column;gap:3px;line-height:1}
+.repo-link-name{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+.repo-link-path{font-family:var(--font-mono);font-size:10px;letter-spacing:.02em;color:var(--muted)}
+.repo-link .arrow{font-size:11px;color:var(--muted);transition:transform .3s var(--ease),color .3s ease}
+.repo-link:hover .arrow{transform:translate(3px,-3px);color:var(--ink)}
+/* Narrow screens: the pills stack, so make them full-width with the arrow
+   pushed to the edge — two ragged right edges read as a mistake, one
+   aligned column reads as a set. */
+@media (max-width:560px){
+  .repo-links{flex-direction:column;align-self:stretch}
+  .repo-link{width:100%}
+  .repo-link .arrow{margin-left:auto}
+}
+
 /* Single hero image, now a link straight to the live product — with a
    permanent (not hover-only, so it still works on touch) chip so the
    click target is obvious without another button competing for attention. */
