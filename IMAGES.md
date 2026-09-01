@@ -87,7 +87,7 @@ folder):** the Now-playing card plays a real file in-page —
 
 The play button (`js/main.js`, `setupDumpPlayer()`) toggles this file
 directly — nothing is embedded from Spotify. The track/artist text next to
-it ("Everything In Its Right Place" / "Radiohead — Kid A") is still the
+it ("Vienna" / "Billy Joel") is still the
 prototype's placeholder copy — update the two `.player-track` /
 `.player-artist` lines in `dump.html` to match whatever's actually in the
 MP3.
