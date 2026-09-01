@@ -167,6 +167,7 @@
     var scrub = document.querySelector('[data-player-scrub]');
     var fill = document.querySelector('[data-player-fill]');
     var time = document.querySelector('[data-player-time]');
+    var total = document.querySelector('[data-player-total]');
     if (!card || !audio || !btn) return;
 
     function render() {
@@ -175,6 +176,8 @@
       if (fill) fill.style.width = pct + '%';
       if (scrub) scrub.setAttribute('aria-valuenow', String(Math.round(pct)));
       if (time) time.textContent = fmtTime(audio.currentTime);
+      /* Total stays 0:00 until metadata lands — never NaN. */
+      if (total) total.textContent = fmtTime(dur);
     }
 
     function seekTo(ratio) {
@@ -200,6 +203,11 @@
     });
     audio.addEventListener('timeupdate', render);
     audio.addEventListener('loadedmetadata', render);
+    audio.addEventListener('durationchange', render);
+
+    /* Paint once now: if the file was already cached, loadedmetadata fired
+       before these listeners existed and the duration would never show. */
+    render();
 
     if (scrub) {
       scrub.addEventListener('click', function (e) {

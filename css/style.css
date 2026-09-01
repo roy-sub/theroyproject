@@ -470,18 +470,41 @@ main{padding-top:var(--header-h)}
 .player-band-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:clamp(32px,5vw,80px);align-items:center}
 .player-kicker{margin-bottom:clamp(18px,2.4vw,28px);font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dark-meta)}
 .player-quote{margin:0;max-width:34ch;font-family:var(--font-serif);font-style:italic;font-size:clamp(1.5rem,3.4vw,2.8rem);line-height:1.15;letter-spacing:-.02em;color:var(--dark-fg);text-wrap:pretty}
-.player-card-wrap{width:min(400px,100%);justify-self:end;perspective:1000px}
+.player-card-wrap{width:min(340px,100%);justify-self:end;perspective:1000px}
 .player-card-tilt{transform:rotateY(-4deg) rotateX(2deg);transform-style:preserve-3d;transition:transform .6s var(--ease)}
 .player-card-tilt:hover{transform:rotateY(0deg) rotateX(0deg) translateY(-5px)}
+
+/* The card is a square sleeve, not a wide row: "Vienna / Billy Joel" is
+   short, so a landscape card spent most of its width on nothing. Square
+   hands that space to the artwork — full-bleed, uncropped, since a square
+   card and a square cover are the same shape — and the transport rides on
+   a glass panel over its lower edge. */
 .player-card{
-  display:flex;align-items:center;gap:14px;padding:13px;border-radius:8px;
+  position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:20px;
   background:linear-gradient(160deg,#282828 0%,#1a1a1a 60%,#141414 100%);
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 20px 38px -14px rgba(0,0,0,.6),0 46px 80px -34px rgba(0,0,0,.5);
 }
-.player-art{position:relative;width:64px;height:64px;flex-shrink:0;overflow:hidden;border-radius:4px;background:#2f2f2f;box-shadow:0 8px 18px -6px rgba(0,0,0,.7)}
-.player-art img{width:100%;height:100%;object-fit:cover}
-.player-info{flex:1;min-width:0}
-.player-eq-row{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-family:var(--font-mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--spotify-green)}
+.player-art{position:absolute;inset:0;overflow:hidden;background:#2f2f2f}
+.player-art img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.player-card-tilt:hover .player-art img{transform:scale(1.04)}
+/* Scrim — the panel is translucent, so the artwork underneath is darkened
+   toward the bottom to keep the type legible whatever cover is loaded. */
+.player-art::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,.20) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,.78) 100%);
+}
+.player-info{
+  position:absolute;left:10px;right:10px;bottom:10px;padding:14px 15px 15px;
+  border-radius:14px;border:1px solid rgba(255,255,255,.10);
+  background:rgba(12,12,11,.74);backdrop-filter:blur(22px) saturate(1.25);-webkit-backdrop-filter:blur(22px) saturate(1.25);
+  box-shadow:0 14px 30px -18px rgba(0,0,0,.9);
+}
+/* Without backdrop-filter the panel would sit as flat tint over a busy
+   photo — go nearly opaque instead of illegible. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .player-info{background:rgba(12,12,11,.93)}
+}
+.player-eq-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;font-family:var(--font-mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--spotify-green)}
 .player-eq{display:flex;align-items:flex-end;gap:2px;height:8px}
 /* Bars only actually animate while audio is playing — data-player toggles
    .is-playing in js/main.js (setupDumpPlayer). Paused by default so they
@@ -491,19 +514,48 @@ main{padding-top:var(--header-h)}
 .player-eq span:nth-child(2){height:85%;animation-delay:.2s}
 .player-eq span:nth-child(3){height:30%;animation-delay:.4s}
 [data-player].is-playing .player-eq span{animation-play-state:running}
-.player-track{font-size:14px;font-weight:500;letter-spacing:-.012em;color:var(--dark-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-artist{margin-bottom:10px;font-size:11.5px;color:var(--dark-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-scrub-row{display:flex;align-items:center;gap:9px}
-.player-scrub{position:relative;flex:1;height:3px;border-radius:2px;background:#3f3f3f;overflow:hidden;cursor:pointer}
+.player-track{font-size:17px;font-weight:500;letter-spacing:-.02em;color:var(--dark-fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-artist{margin-bottom:13px;font-size:12.5px;color:rgba(244,243,241,.68);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-scrub-row{display:flex;align-items:center;gap:10px}
+.player-scrub{position:relative;flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.15);cursor:pointer}
+/* A 3px line is a miserable target on a phone — the bar stays hairline,
+   the hit area doesn't. */
+.player-scrub::before{content:"";position:absolute;inset:-11px 0}
 .player-scrub-fill{position:absolute;left:0;top:0;bottom:0;width:0%;background:var(--dark-fg);border-radius:2px}
-.player-time{font-family:var(--font-mono);font-size:8.5px;color:var(--dark-meta);font-variant-numeric:tabular-nums}
-.player-play{
-  appearance:none;border:0;padding:0;font-family:inherit;cursor:pointer;
-  flex-shrink:0;width:40px;height:40px;border-radius:50%;background:var(--spotify-green);color:var(--dark-bg);
-  display:flex;align-items:center;justify-content:center;font-size:12px;
-  box-shadow:0 8px 18px -7px oklch(0.76 0.19 145 / .85);transition:transform .3s ease;
+/* Handle appears on hover/focus and while playing, so the bar reads as
+   draggable rather than as decoration. */
+.player-scrub-fill::after{
+  content:"";position:absolute;right:-4px;top:50%;margin-top:-4.5px;width:9px;height:9px;border-radius:50%;
+  background:var(--dark-fg);box-shadow:0 2px 6px -1px rgba(0,0,0,.8);opacity:0;transition:opacity .25s ease;
 }
-.player-play:hover{transform:scale(1.09);color:var(--dark-bg)}
+.player-scrub:hover .player-scrub-fill::after,
+.player-scrub:focus-visible .player-scrub-fill::after,
+[data-player].is-playing .player-scrub-fill::after{opacity:1}
+.player-time{display:flex;gap:5px;flex-shrink:0;font-family:var(--font-mono);font-size:9px;color:rgba(244,243,241,.62);font-variant-numeric:tabular-nums}
+.player-time-sep{opacity:.45}
+/* Straddles the panel's top edge — the one element allowed to break the
+   panel's rectangle, which is what makes it read as THE control. */
+.player-play{
+  appearance:none;border:0;padding:0;font-family:inherit;cursor:pointer;line-height:1;
+  position:absolute;right:14px;top:0;transform:translateY(-50%);
+  width:46px;height:46px;border-radius:50%;background:var(--spotify-green);color:var(--dark-bg);
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.22),0 10px 22px -8px oklch(0.76 0.19 145 / .9);
+  transition:transform .3s var(--ease),box-shadow .3s ease;
+}
+.player-play:hover{transform:translateY(-50%) scale(1.08);color:var(--dark-bg);box-shadow:0 0 0 1px rgba(0,0,0,.22),0 14px 28px -8px oklch(0.76 0.19 145 / .95)}
+.player-play:active{transform:translateY(-50%) scale(.97)}
+
+/* Single-column layout: the card centers under the quote instead of
+   hugging a right edge that no longer exists. */
+@media (max-width:900px){
+  .player-card-wrap{justify-self:center}
+}
+/* Touch devices never fire the hover that straightens the tilt, so the card
+   would sit skewed forever — sit it flat there instead. */
+@media (hover:none){
+  .player-card-tilt{transform:none}
+}
 
 /* ==========================================================================
    Journal — list + post
