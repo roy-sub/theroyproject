@@ -86,28 +86,27 @@
       </div>
       <div class="player-card-wrap">
         <div class="player-card-tilt">
-          <!-- Square sleeve: full-bleed artwork with the transport on a glass
-               panel over its lower edge, and the play button straddling that
-               panel's top-right corner. The track/artist names are short, so
-               a wide row left them stranded — square gives the art the room
-               and keeps the metadata as a caption on top of it. -->
+          <!-- Compact sleeve: artwork on top, transport underneath. Sized to
+               sit inside the height of the quote beside it, so this band's
+               height is set by the type, not by the card. -->
           <div class="player-card" data-player>
             <!-- Plays locally in-page — not embedded from Spotify. Swap the src
                  if the file moves; see IMAGES.md for the audio requirements. -->
             <audio data-player-audio src="images/dump/spotify-audio.mp3" preload="metadata"></audio>
-            <div class="player-art"><img src="images/dump/spotify-art.png" alt="Album art" loading="lazy"></div>
+            <div class="player-art">
+              <img src="images/dump/spotify-art.png" alt="Album art" loading="lazy">
+              <span class="player-eq" aria-hidden="true"><span></span><span></span><span></span></span>
+            </div>
             <div class="player-info">
-              <button type="button" class="player-play" data-player-btn aria-label="Play">▶</button>
-              <div class="player-eq-row">
-                <span class="player-eq" aria-hidden="true"><span></span><span></span><span></span></span>
-                <span data-i18n="Now playing">Now playing</span>
+              <div class="player-head">
+                <div class="player-titles">
+                  <div class="player-track">Vienna</div>
+                  <div class="player-artist">Billy Joel</div>
+                </div>
+                <button type="button" class="player-play" data-player-btn aria-label="Play">▶</button>
               </div>
-              <div class="player-track">Vienna</div>
-              <div class="player-artist">Billy Joel</div>
-              <div class="player-scrub-row">
-                <span class="player-scrub" data-player-scrub tabindex="0" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="player-scrub-fill" data-player-fill></span></span>
-                <span class="player-time"><span data-player-time>0:00</span><span class="player-time-sep" aria-hidden="true">/</span><span data-player-total>0:00</span></span>
-              </div>
+              <span class="player-scrub" data-player-scrub tabindex="0" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="player-scrub-fill" data-player-fill></span></span>
+              <div class="player-time"><span data-player-time>0:00</span><span data-player-total>0:00</span></div>
             </div>
           </div>
         </div>
